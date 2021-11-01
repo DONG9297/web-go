@@ -1,4 +1,4 @@
-module web-go
+module web-go/src
 
 go 1.17
 

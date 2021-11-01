@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
-	"web-go/dao"
-	"web-go/model"
-	"web-go/utils"
+	"web-go/src/dao"
+	"web-go/src/model"
+	"web-go/src/utils"
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +87,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		//格式有误
 		rst := model.Result{
 			Code: 500,
-			Msg:  "登陆失败，手机号或密码不正确1",
+			Msg:  "登陆失败，手机号或密码不正确",
 			Data: []string{},
 		}
 		response, _ := json.Marshal(rst)  // json化结果集
@@ -130,7 +130,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			rst := model.Result{
 				Code: 200,
 				Msg:  "登陆成功",
-				Data: []string{},
+				Data: []string{sess.SessionID},
 			}
 			response, _ := json.Marshal(rst)  // json化结果集
 			fmt.Fprintln(w, string(response)) // 返回结果

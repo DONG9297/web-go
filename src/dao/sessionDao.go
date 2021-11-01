@@ -2,8 +2,8 @@ package dao
 
 import (
 	"net/http"
-	"web-go/model"
-	"web-go/utils"
+	"web-go/src/model"
+	"web-go/src/utils"
 )
 
 //AddSession 向数据库中添加Session
@@ -11,7 +11,7 @@ func AddSession(sess *model.Session) error {
 	//写sql语句
 	sqlStr := "insert into sessions (session_id,user_id) values(?,?)"
 	//执行sql
-	_, err := utils.Db.Exec(sqlStr, sess.SessionID,  sess.UserID)
+	_, err := utils.Db.Exec(sqlStr, sess.SessionID, sess.UserID)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func GetSession(sessID string) (*model.Session, error) {
 	//创建Session
 	sess := &model.Session{}
 	//扫描数据库中的字段值为Session的字段赋值
-	row.Scan(&sess.SessionID,  &sess.UserID)
+	row.Scan(&sess.SessionID, &sess.UserID)
 	return sess, nil
 }
 

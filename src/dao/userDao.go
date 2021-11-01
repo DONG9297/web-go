@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"web-go/model"
-	"web-go/utils"
+	"web-go/src/model"
+	"web-go/src/utils"
 )
 
 func CheckUserPhoneAndPassword(phone string, password string) (*model.User, error) {
@@ -11,8 +11,8 @@ func CheckUserPhoneAndPassword(phone string, password string) (*model.User, erro
 	row := utils.Db.QueryRow(sqlStr, phone, password)
 	user := &model.User{}
 	err := row.Scan(&user.ID, &user.Phone, &user.Name, &user.Password)
-	if err != nil{
-		return user,err
+	if err != nil {
+		return user, err
 	}
 	return user, nil
 }
@@ -26,4 +26,15 @@ func AddUser(user *model.User) error {
 	utils.Db.QueryRow("SELECT id FROM users WHERE phone=?", user.Phone).Scan(&user.ID)
 	return nil
 
+}
+
+func GetUserByID(id int) (*model.User, error) {
+	sqlStr := "select id, phone, name, password from users where id = ?"
+	row := utils.Db.QueryRow(sqlStr, id)
+	user := &model.User{}
+	err := row.Scan(&user.ID, &user.Phone, &user.Name, &user.Password)
+	if err != nil {
+		return user, err
+	}
+	return user, err
 }

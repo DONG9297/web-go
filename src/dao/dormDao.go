@@ -1,11 +1,11 @@
 package dao
 
 import (
-	"web-go/model"
-	"web-go/utils"
+	"web-go/src/model"
+	"web-go/src/utils"
 )
 
-func GetDorms()([]*model.Dorm,error){
+func GetDorms() ([]*model.Dorm, error) {
 	//写sql语句
 	sql := "select dorm_name, building_name, beds_amount, availiable_beds_count from dorms"
 	//执行

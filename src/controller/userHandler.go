@@ -126,7 +126,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 				Value: token,
 				//HttpOnly: true,
 			}
-
 			//将cookie发送给浏览器
 			http.SetCookie(w, &cookie)
 			//返回成功消息

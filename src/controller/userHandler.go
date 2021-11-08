@@ -108,33 +108,63 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, string(response)) // 返回结果
 			return
 		} else {
+
 			//用户名和密码正确
-			//生成UUID作为Session的id
-			uuid := utils.CreateUUID()
-			//创建一个Session
-			sess := &model.Session{
-				SessionID: uuid,
-				UserID:    user.ID,
+			token, err := utils.GenerateToken(user.Phone, user.Name)
+			if err != nil {
+				rst := model.Result{
+					Code: 500,
+					Msg:  "未成功生成Token",
+					Data: []string{},
+				}
+				response, _ := json.Marshal(rst)  // json化结果集
+				fmt.Fprintln(w, string(response)) // 返回结果
 			}
-			//将Session保存到数据库中
-			dao.AddSession(sess)
-			//创建一个Cookie，让它与Session相关联
+
 			cookie := http.Cookie{
 				Name:  "dorm_user",
-				Value: uuid,
+				Value: token,
 				//HttpOnly: true,
 			}
+
 			//将cookie发送给浏览器
 			http.SetCookie(w, &cookie)
 			//返回成功消息
 			rst := model.Result{
 				Code: 200,
 				Msg:  "登陆成功",
-				Data: []string{sess.SessionID},
+				Data: []string{token},
 			}
 			response, _ := json.Marshal(rst)  // json化结果集
 			fmt.Fprintln(w, string(response)) // 返回结果
 			return
+			////用户名和密码正确
+			////生成UUID作为Session的id
+			//uuid := utils.CreateUUID()
+			////创建一个Session
+			//sess := &model.Session{
+			//	SessionID: uuid,
+			//	UserID:    user.ID,
+			//}
+			////将Session保存到数据库中
+			//dao.AddSession(sess)
+			////创建一个Cookie，让它与Session相关联
+			//cookie := http.Cookie{
+			//	Name:  "dorm_user",
+			//	Value: uuid,
+			//	//HttpOnly: true,
+			//}
+			////将cookie发送给浏览器
+			//http.SetCookie(w, &cookie)
+			////返回成功消息
+			//rst := model.Result{
+			//	Code: 200,
+			//	Msg:  "登陆成功",
+			//	Data: []string{sess.SessionID},
+			//}
+			//response, _ := json.Marshal(rst)  // json化结果集
+			//fmt.Fprintln(w, string(response)) // 返回结果
+			//return
 		}
 	}
 }

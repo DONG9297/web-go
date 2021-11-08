@@ -9,5 +9,5 @@ func main() {
 	http.HandleFunc("/", controller.Register)
 	http.HandleFunc("/login", controller.Login)
 	http.HandleFunc("/list", controller.ListDorms)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":80", nil)
 }

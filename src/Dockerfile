@@ -40,6 +40,6 @@ RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 #把app文件从“builder”中拷贝到本级的当前目录
 COPY --from=builder /go/release/app .
 # 暴露端口
-EXPOSE 8080
+EXPOSE 10700
 # 项目默认启动命令
 CMD ["./app"]

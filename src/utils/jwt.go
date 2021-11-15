@@ -1,14 +1,12 @@
 package utils
 
 import (
-	"time"
-
 	"github.com/dgrijalva/jwt-go"
-
+	"time"
 	"web-go/src/model"
 )
 
-var jwtSecret = []byte("DengHanzi") // jwt密钥
+var jwtSecret = []byte("Dongrui") // jwt密钥
 
 // GenerateToken 生成 token
 func GenerateToken(mobile, name string) (string, error) {

@@ -1,66 +1,120 @@
 -- 建库
 CREATE
-DATABASE IF NOT EXISTS my_db default charset utf8 COLLATE utf8_general_ci;
-
+DATABASE IF NOT EXISTS `user` default charset utf8 COLLATE utf8_general_ci;
 -- 切换数据库
 use
-my_db;
+`user`;
 
--- 建表
+-- 用户表
 DROP TABLE IF EXISTS `users`;
-
 CREATE TABLE `users`
 (
-    `id`       int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `phone`    varchar(100) DEFAULT NULL COMMENT '手机号',
-    `name`     varchar(100) DEFAULT NULL COMMENT '用户名',
-    `password` varchar(100) DEFAULT NULL COMMENT 'MD5密码',
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    `user_id`  INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    `phone`    VARCHAR(20)  NOT NULL UNIQUE COMMENT '手机号',
+    `name`     VARCHAR(20)  NOT NULL COMMENT '用户名',
+    `password` VARCHAR(100) NOT NULL COMMENT 'MD5密码'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
--- 插入数据
-INSERT INTO `users` (`id`, `phone`, `name`, `password`)
-VALUES (NULL, '12345678924', 'dong', 'e10adc3949ba59abbe56e057f20f883e'),
-       (NULL, '12345678925', 'dong', 'e10adc3949ba59abbe56e057f20f883e'),
-       (NULL, '12345678927', 'dong', 'e10adc3949ba59abbe56e057f20f883e'),
-       (NULL, '12345678987', 'dong', 'f30dc57ff8a4d30252d16ed9b97ce272'),
-       (NULL, '12345678988', 'dong', 'e10adc3949ba59abbe56e057f20f883e'),
-       (NULL, '12345678956', 'dong', 'e10adc3949ba59abbe56e057f20f883e'),
-       (NULL, '12345678975', 'dong', 'e10adc3949ba59abbe56e057f20f883e'),
-       (NULL, '12345678931', 'dong', 'e10adc3949ba59abbe56e057f20f883e'),
-       (NULL, '12345678999', 'dong', 'e10adc3949ba59abbe56e057f20f883e'),
-       (NULL, '12345678900', 'dong', 'e10adc3949ba59abbe56e057f20f883e');
-
-
--- 建表
-DROP TABLE IF EXISTS `dorms`;
-
-CREATE TABLE `dorms`
+-- Student表
+DROP TABLE IF EXISTS `students`;
+CREATE TABLE `students`
 (
-    `dorm_name`             varchar(10) NOT NULL COMMENT '宿舍名',
-    `building_name`         varchar(10) DEFAULT NULL COMMENT '楼号',
-    `beds_amount`           int         DEFAULT NULL COMMENT '总床位数',
-    `availiable_beds_count` int         DEFAULT NULL COMMENT '剩余床位数',
-    PRIMARY KEY (`dorm_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    `stu_id`     INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    `stu_no`     VARCHAR(20) NOT NULL UNIQUE COMMENT '学号',
+    `stu_name`   VARCHAR(50) NOT NULL COMMENT '姓名',
+    `stu_gender` VARCHAR(4)  DEFAULT NULL COMMENT '性别',
+    `stu_email`  VARCHAR(50) DEFAULT NULL COMMENT '邮箱'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
--- 插入数据
-INSERT INTO `dorms` (`dorm_name`, `building_name`, `beds_amount`, `availiable_beds_count`)
-VALUES ('5001', '5号楼', '4', '1'),
-       ('5002', '5号楼', '4', '0'),
-       ('5003', '5号楼', '4', '3'),
-       ('e1211', '13号楼', '2', '0'),
-       ('e1212', '13号楼', '2', '1'),
-       ('e1213', '13号楼', '3', '0'),
-       ('e1214', '13号楼', '5', '2'),
-       ('e1215', '13号楼', '3', '0');
+-- 认证码表
+DROP TABLE IF EXISTS `auth_codes`;
+CREATE TABLE `auth_codes`
+(
+    `user_id` INT UNSIGNED,
+    `stu_id`  INT UNSIGNED,
+    `code`    INT UNSIGNED COMMENT '认证码',
+    PRIMARY KEY (`user_id`, `stu_id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`user_id`),
+    FOREIGN KEY (`stu_id`) REFERENCES students (`stu_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
--- 建表
+-- Session表
 DROP TABLE IF EXISTS `sessions`;
-
 CREATE TABLE `sessions`
 (
     `session_id` VARCHAR(100) PRIMARY KEY,
-    `user_id`    INT NOT NULL,
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    `user_id`    INT UNSIGNED NOT NULL,
+    FOREIGN KEY (`user_id`) REFERENCES users (`user_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+
+
+-- -- 建库
+-- CREATE
+-- DATABASE IF NOT EXISTS `dorm` default charset utf8 COLLATE utf8_general_ci;
+-- -- 切换数据库
+-- use
+-- `dorm`;
+
+DROP TABLE IF EXISTS `buildings`;
+CREATE TABLE `buildings`
+(
+    `building_id` INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    `name`        VARCHAR(50) NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+
+DROP TABLE IF EXISTS `units`;
+CREATE TABLE `units`
+(
+    `unit_id`     INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    `name`        VARCHAR(50) NOT NULL,
+    `building_id` INT UNSIGNED NOT NULL,
+    FOREIGN KEY (`building_id`) REFERENCES buildings (`building_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+
+DROP TABLE IF EXISTS `dorms`;
+CREATE TABLE `dorms`
+(
+    `dorm_id`        INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    `name`           VARCHAR(20) NOT NULL,
+    `gender`         CHAR(10),
+    `total_beds`     INT         NOT NULL,
+    `available_beds` INT         NOT NULL,
+    `unit_id`        INT UNSIGNED NOT NULL,
+    FOREIGN KEY (`unit_id`) REFERENCES units (`unit_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+
+
+DROP TABLE IF EXISTS `stu_dorm`;
+CREATE TABLE `stu_dorm`
+(
+    `id`      INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    `stu_id`  INT UNSIGNED,
+    `dorm_id` INT UNSIGNED,
+    FOREIGN KEY (`stu_id`) REFERENCES students (`stu_id`),
+    FOREIGN KEY (`dorm_id`) REFERENCES dorms (`dorm_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+
+
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE `orders`
+(
+    `order_id`    VARCHAR(100) PRIMARY KEY,
+    `user_id`     INT UNSIGNED,
+    `count`       INT,
+    `building_id` INT UNSIGNED NOT NULL,
+    `gender`      VARCHAR(4),
+    `create_time` VARCHAR(100),
+    `state`       INT UNSIGNED,
+    FOREIGN KEY (`user_id`) REFERENCES users (`user_id`),
+    FOREIGN KEY (`building_id`) REFERENCES buildings (`building_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE `orders`
+(
+    `id`       INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    `order_id` VARCHAR(100),
+    `stu_id`   INT UNSIGNED,
+    FOREIGN KEY (`stu_id`) REFERENCES students (`stu_id`),
+    FOREIGN KEY (`order_id`) REFERENCES orders (`order_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;

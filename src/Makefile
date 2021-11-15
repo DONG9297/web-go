@@ -8,4 +8,4 @@ docker:
 	docker build -t $(NAME):$(TAG) .
 
 run:
-	docker run  --link userdb -p 10707:8080 -e MYSQL_HOST="$(DBINSTANCE)" -d $(NAME):$(TAG)
+	docker run  --link userdb -p 10700:10700 -e MYSQL_HOST="$(DBINSTANCE)" -d $(NAME):$(TAG)

@@ -2,12 +2,32 @@ package main
 
 import (
 	"net/http"
+	"time"
 	"web-go/src/controller"
 )
 
 func main() {
-	http.HandleFunc("/", controller.Register)
+	// 首页
+	//http.HandleFunc("/", )
+	// 注册
+	http.HandleFunc("/register", controller.Register)
+	// 登陆
 	http.HandleFunc("/login", controller.Login)
-	http.HandleFunc("/list", controller.ListDorms)
-	http.ListenAndServe(":80", nil)
+	// 退出
+	http.HandleFunc("/logout", controller.Logout)
+	// 填写学生信息，获取认证码
+	http.HandleFunc("/studentInfo", controller.GetAuth)
+	// 选宿舍
+	http.HandleFunc("/chooseDorm", controller.ChooseDorm)
+	// 查询结果
+	http.HandleFunc("/result", controller.GetResult)
+
+	http.ListenAndServe(":10700", nil)
+
+	// 每10秒处理一次订单
+	ticker := time.NewTicker(10 * time.Second)
+	for _ = range ticker.C {
+		timeStr := time.Now().Format("2006-01-02 15:04:05")
+		controller.ProcessOrder(timeStr)
+	}
 }

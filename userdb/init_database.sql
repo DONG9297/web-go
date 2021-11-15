@@ -109,10 +109,10 @@ CREATE TABLE `orders`
     FOREIGN KEY (`building_id`) REFERENCES buildings (`building_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
-DROP TABLE IF EXISTS `orders`;
-CREATE TABLE `orders`
+DROP TABLE IF EXISTS `order_items`;
+CREATE TABLE `order_items`
 (
-    `id`       INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    `item_id`  INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     `order_id` VARCHAR(100),
     `stu_id`   INT UNSIGNED,
     FOREIGN KEY (`stu_id`) REFERENCES students (`stu_id`),

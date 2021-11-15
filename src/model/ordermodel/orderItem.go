@@ -14,7 +14,7 @@ func AddOrderItem(orderItem *OrderItem) error {
 	return err
 }
 
-func GetItemsByOrderID(OrderID int) (orderItems []*OrderItem) {
+func GetItemsByOrderID(OrderID string) (orderItems []*OrderItem) {
 	sqlStr := "select item_id, order_id, stu_id from order_items where order_id = ?"
 	rows, err := utils.Db.Query(sqlStr, OrderID)
 	if err != nil {

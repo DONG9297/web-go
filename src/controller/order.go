@@ -107,22 +107,32 @@ func GetResult(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// ProcessOrder 处理时间早于timeStr发生的订单
 func ProcessOrder(timeStr string) {
+	// 获取待处理订单
 	orders := ordermodel.GetUnprocessedOrdersBefore(timeStr)
 	for _, order := range orders {
+		// 获取满足订单条件的宿舍列表
 		var dorms []*dormmodel.Dorm
 		units := dormmodel.GetUnitsByBuilding(order.BuildingID)
 		for _, unit := range units {
 			dorms = append(dorms, dormmodel.GetAvailableDorms(unit.ID, order.Count, order.Gender)...)
 		}
+		// 如果宿舍列表不为空
 		if len(dorms) > 0 {
 			dorm := dorms[0]
 			availableBeds := dorm.AvailableBeds - order.Count
+			// 更新宿舍空床数
 			dormmodel.UpdateDormAvailableBeds(dorm.ID, availableBeds)
+			// 将选宿舍信息加入学生宿舍表
+			items := ordermodel.GetItemsByOrderID(order.ID)
+			for _, item := range items {
+				model.AddStudentIntoDorm(item.StudentID, dorm.ID)
+			}
+			// 更新订单状态
 			ordermodel.UpdateOrderState(order.ID, 1)
 		} else {
 			ordermodel.UpdateOrderState(order.ID, 2)
 		}
 	}
-
 }

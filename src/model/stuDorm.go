@@ -49,3 +49,11 @@ func GetStuDormByStudentID(studentID int) (stuDorm *StuDorm) {
 	}
 	return stuDorm
 }
+
+func HasStudentChosenDorm(studentID int) bool {
+	stuDorm := GetStuDormsByDormID(studentID)
+	if stuDorm == nil {
+		return false
+	}
+	return true
+}

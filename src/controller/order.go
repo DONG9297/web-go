@@ -35,6 +35,7 @@ func ChooseDorm(w http.ResponseWriter, r *http.Request) {
 	}
 	var students []*usermodel.Student
 	stu := usermodel.GetStudentByID(auth.StudentID)
+	gender := stu.Gender
 	students = append(students, stu)
 	for i := 0; i < 3; i++ {
 		key := "code" + strconv.Itoa(i)
@@ -47,10 +48,18 @@ func ChooseDorm(w http.ResponseWriter, r *http.Request) {
 			}
 			auth := usermodel.GetAuthByCode(code)
 			if auth == nil {
-				model.Response(w, false, 500, "同住人不存在", map[string]string{"code": codeStr})
+				model.Response(w, false, 500, "同住人不存在", map[string]string{"auth_code": codeStr})
 				return
 			}
 			stu := usermodel.GetStudentByID(auth.StudentID)
+			if stu == nil || stu.Gender != gender {
+				model.Response(w, false, 500, "同住人性别错误", map[string]string{"auth_code": codeStr})
+				return
+			}
+			if model.HasStudentChosenDorm(stu.ID) {
+				model.Response(w, false, 500, "同住人已选宿舍", map[string]string{"auth_code": codeStr})
+				return
+			}
 			students = append(students, stu)
 		}
 	}
@@ -76,6 +85,8 @@ func ChooseDorm(w http.ResponseWriter, r *http.Request) {
 		}
 		ordermodel.AddOrderItem(orderItem)
 	}
+	model.Response(w, true, 200, "成功", nil)
+	return
 }
 
 func GetResult(w http.ResponseWriter, r *http.Request) {
